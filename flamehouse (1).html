@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlameHouse — Seriously Good Food</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+
+<style>
+/* ─── RESET & ROOT ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --flame: #E8441C;
+  --flame-dark: #b8310e;
+  --flame-light: #ff6b3d;
+  --charcoal: #111111;
+  --charcoal-2: #1c1c1c;
+  --charcoal-3: #252525;
+  --ash: #3a3a3a;
+  --smoke: #6b6b6b;
+  --cream: #f5f0e8;
+  --cream-2: #ede6d6;
+  --gold: #c9a84c;
+  --white: #ffffff;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-serif: 'DM Serif Display', serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--charcoal);
+  color: var(--cream);
+  overflow-x: hidden;
+  cursor: default;
+}
+a { text-decoration: none; color: inherit; }
+button { font-family: var(--font-body); cursor: pointer; border: none; background: none; }
+img { display: block; max-width: 100%; }
+
+/* ─── SCROLLBAR ─────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--charcoal-2); }
+::-webkit-scrollbar-thumb { background: var(--ash); border-radius: 3px; }
+
+/* ─── NOISE TEXTURE OVERLAY ────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.35;
+}
+
+/* ─── NAVIGATION ─────────────────────────────────────────── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 0 3rem;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(17,17,17,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transition: background 0.3s;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+}
+.nav-logo-mark {
+  width: 38px; height: 38px;
+  background: var(--flame);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  transform: rotate(-5deg);
+  transition: transform 0.3s;
+}
+.nav-logo-mark:hover { transform: rotate(0deg) scale(1.05); }
+.nav-logo-text {
+  font-family: var(--font-display);
+  font-size: 26px;
+  letter-spacing: 2px;
+  color: var(--white);
+}
+.nav-logo-text span { color: var(--flame); }
+.nav-links {
+  display: flex; gap: 2.5rem; align-items: center;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  color: var(--smoke);
+  text-transform: uppercase;
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0; right: 0;
+  height: 1.5px;
+  background: var(--flame);
+  transform: scaleX(0);
+  transition: transform 0.25s;
+}
+.nav-links a:hover { color: var(--cream); }
+.nav-links a:hover::after { transform: scaleX(1); }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.nav-location {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--smoke);
+  background: var(--charcoal-3);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.nav-location:hover { border-color: var(--flame); color: var(--cream); }
+.nav-location svg { color: var(--flame); }
+.cart-trigger {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--flame);
+  color: var(--white);
+  border-radius: 10px;
+  padding: 9px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  transition: background 0.2s, transform 0.15s;
+  position: relative;
+}
+.cart-trigger:hover { background: var(--flame-light); transform: translateY(-1px); }
+.cart-trigger:active { transform: translateY(0); }
+.cart-count {
+  background: var(--white);
+  color: var(--flame);
+  font-size: 11px;
+  font-weight: 500;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s;
+}
+.cart-count.bump { transform: scale(1.35); }
+
+/* ─── HERO ───────────────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding: 0 4rem;
+  padding-top: 72px;
+  position: relative;
+  overflow: hidden;
+  background: var(--charcoal);
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 50%;
+  background: radial-gradient(ellipse at 60% 50%, rgba(232,68,28,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(232,68,28,0.12);
+  border: 1px solid rgba(232,68,28,0.25);
+  border-radius: 100px;
+  padding: 6px 16px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--flame-light);
+  margin-bottom: 1.5rem;
+  animation: fadeUp 0.7s 0.1s both;
+}
+.hero-eyebrow::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--flame);
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.7); }
+}
+.hero-headline {
+  font-family: var(--font-display);
+  font-size: clamp(60px, 7vw, 100px);
+  line-height: 0.92;
+  letter-spacing: 3px;
+  color: var(--white);
+  margin-bottom: 1.5rem;
+  animation: fadeUp 0.7s 0.2s both;
+}
+.hero-headline .accent { color: var(--flame); }
+.hero-headline .serif {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.85em;
+  color: var(--cream-2);
+  letter-spacing: 1px;
+}
+.hero-body {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--smoke);
+  max-width: 420px;
+  margin-bottom: 2.5rem;
+  animation: fadeUp 0.7s 0.3s both;
+}
+.hero-actions {
+  display: flex; gap: 14px; align-items: center;
+  animation: fadeUp 0.7s 0.4s both;
+}
+.btn-flame {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--flame);
+  color: var(--white);
+  border-radius: 12px;
+  padding: 15px 30px;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 8px 32px rgba(232,68,28,0.35);
+}
+.btn-flame:hover { background: var(--flame-light); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(232,68,28,0.45); }
+.btn-flame:active { transform: translateY(0); }
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 10px;
+  border: 1.5px solid rgba(255,255,255,0.15);
+  color: var(--cream);
+  border-radius: 12px;
+  padding: 15px 28px;
+  font-size: 15px;
+  transition: border-color 0.2s, background 0.2s;
+}
+.btn-outline:hover { border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.04); }
+.hero-stats {
+  display: flex; gap: 2.5rem;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  animation: fadeUp 0.7s 0.5s both;
+}
+.hero-stat-num {
+  font-family: var(--font-display);
+  font-size: 36px;
+  letter-spacing: 1px;
+  color: var(--white);
+}
+.hero-stat-num span { color: var(--flame); font-size: 0.6em; }
+.hero-stat-lbl { font-size: 12px; color: var(--smoke); letter-spacing: 0.5px; margin-top: 2px; }
+
+/* Hero Right (Feature Card) */
+.hero-visual {
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  animation: fadeIn 0.9s 0.3s both;
+}
+.feature-card {
+  background: var(--charcoal-2);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 28px;
+  padding: 2.5rem;
+  width: 340px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+}
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--flame), var(--flame-light), transparent);
+}
+.feature-emoji-ring {
+  width: 180px; height: 180px;
+  margin: 0 auto 1.5rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #c0392b, #7b1a0e);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 90px;
+  box-shadow: 0 20px 60px rgba(232,68,28,0.3), inset 0 -10px 30px rgba(0,0,0,0.3);
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.feature-card-name {
+  font-size: 18px; font-weight: 500;
+  color: var(--white);
+  text-align: center;
+  margin-bottom: 4px;
+}
+.feature-card-price {
+  font-family: var(--font-display);
+  font-size: 32px;
+  color: var(--flame);
+  text-align: center;
+  letter-spacing: 2px;
+  margin-bottom: 1.5rem;
+}
+.feature-card-btn {
+  width: 100%;
+  background: var(--flame);
+  color: var(--white);
+  border-radius: 10px;
+  padding: 13px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.feature-card-btn:hover { background: var(--flame-light); }
+.floating-pip {
+  position: absolute;
+  background: var(--charcoal-3);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 10px 14px;
+  backdrop-filter: blur(10px);
+  white-space: nowrap;
+  animation: float 3s ease-in-out infinite;
+}
+.floating-pip:nth-child(1) { top: 20px; right: -20px; animation-delay: 0.5s; }
+.floating-pip:nth-child(2) { bottom: 30px; left: -30px; animation-delay: 1s; }
+.pip-lbl { font-size: 10px; color: var(--smoke); text-transform: uppercase; letter-spacing: 0.5px; }
+.pip-val { font-size: 14px; font-weight: 500; color: var(--white); margin-top: 2px; }
+.pip-stars { color: #F59E0B; font-size: 11px; }
+
+/* ─── DELIVERY STRIP ─────────────────────────────────────── */
+.strip {
+  background: var(--flame);
+  padding: 14px 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+}
+.strip-item {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+  color: rgba(255,255,255,0.9);
+}
+.strip-icon { font-size: 16px; }
+.strip-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.3); }
+
+/* ─── SECTION GLOBALS ────────────────────────────────────── */
+.section { padding: 5rem 4rem; }
+.section-eyebrow {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--flame);
+  margin-bottom: 0.75rem;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-eyebrow::before {
+  content: '';
+  width: 24px; height: 1px;
+  background: var(--flame);
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 4vw, 56px);
+  letter-spacing: 2px;
+  color: var(--white);
+  line-height: 1;
+}
+.section-header {
+  display: flex; align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+}
+.see-all {
+  font-size: 13px;
+  color: var(--smoke);
+  display: flex; align-items: center; gap: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  padding-bottom: 2px;
+  transition: color 0.2s, border-color 0.2s;
+  cursor: pointer;
+}
+.see-all:hover { color: var(--flame); border-color: var(--flame); }
+
+/* ─── CATEGORY TABS ──────────────────────────────────────── */
+.cat-tabs {
+  display: flex; gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+.cat-tab {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--charcoal-2);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 100px;
+  padding: 8px 20px;
+  font-size: 13px;
+  color: var(--smoke);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.cat-tab .tab-emoji { font-size: 16px; }
+.cat-tab:hover { border-color: rgba(232,68,28,0.4); color: var(--cream); }
+.cat-tab.active {
+  background: var(--flame);
+  border-color: var(--flame);
+  color: var(--white);
+}
+
+/* ─── MENU GRID ──────────────────────────────────────────── */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+.menu-card {
+  background: var(--charcoal-2);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+  position: relative;
+}
+.menu-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+  border-color: rgba(232,68,28,0.25);
+}
+.card-img {
+  height: 180px;
+  background: var(--charcoal-3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 72px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s;
+}
+.menu-card:hover .card-img { transform: scale(1.04); }
+.card-img::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 60px;
+  background: linear-gradient(to top, var(--charcoal-2), transparent);
+}
+.card-badge {
+  position: absolute;
+  top: 12px; left: 12px;
+  background: var(--flame);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  z-index: 2;
+}
+.card-badge.badge-gold { background: var(--gold); color: var(--charcoal); }
+.card-body { padding: 16px 18px 20px; }
+.card-name { font-size: 16px; font-weight: 500; color: var(--white); margin-bottom: 6px; line-height: 1.3; }
+.card-desc { font-size: 12px; color: var(--smoke); line-height: 1.6; margin-bottom: 16px; }
+.card-footer { display: flex; align-items: center; justify-content: space-between; }
+.card-price { font-family: var(--font-display); font-size: 26px; letter-spacing: 1px; color: var(--flame); line-height: 1; }
+.card-price-sub { font-family: var(--font-body); font-size: 11px; color: var(--smoke); margin-top: 2px; }
+.card-meta { display: flex; align-items: center; gap: 12px; }
+.card-rating { font-size: 12px; color: var(--smoke); display: flex; align-items: center; gap: 4px; }
+.card-rating .star { color: #F59E0B; }
+.add-btn {
+  width: 38px; height: 38px;
+  background: var(--flame);
+  color: var(--white);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  line-height: 1;
+  transition: background 0.2s, transform 0.15s;
+  flex-shrink: 0;
+}
+.add-btn:hover { background: var(--flame-light); transform: scale(1.1); }
+.add-btn:active { transform: scale(0.95); }
+
+/* ─── PROMO BANNER ───────────────────────────────────────── */
+.promo-section { padding: 0 4rem 5rem; }
+.promo-card {
+  background: var(--charcoal-2);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 24px;
+  padding: 3rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.promo-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, var(--flame), var(--flame-light));
+  border-radius: 4px 0 0 4px;
+}
+.promo-glow {
+  position: absolute;
+  right: 100px; top: 50%;
+  transform: translateY(-50%);
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(232,68,28,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.promo-tag {
+  display: inline-block;
+  background: rgba(201,168,76,0.15);
+  border: 1px solid rgba(201,168,76,0.3);
+  color: var(--gold);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  margin-bottom: 1rem;
+}
+.promo-title {
+  font-family: var(--font-display);
+  font-size: 42px;
+  letter-spacing: 2px;
+  color: var(--white);
+  margin-bottom: 0.5rem;
+  line-height: 1;
+}
+.promo-desc { font-size: 14px; color: var(--smoke); line-height: 1.6; margin-bottom: 1.75rem; max-width: 400px; }
+.promo-code-wrap { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.promo-code {
+  background: var(--charcoal-3);
+  border: 1.5px dashed rgba(201,168,76,0.4);
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-family: monospace;
+  font-size: 16px;
+  letter-spacing: 3px;
+  color: var(--gold);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.promo-code:hover { background: rgba(201,168,76,0.08); }
+.promo-right { text-align: right; }
+.promo-was { font-size: 14px; color: var(--smoke); text-decoration: line-through; margin-bottom: 4px; }
+.promo-now { font-family: var(--font-display); font-size: 56px; color: var(--flame); letter-spacing: 2px; line-height: 1; }
+.promo-emoji-wrap { font-size: 56px; text-align: center; margin-top: 8px; }
+
+/* ─── WHY US ─────────────────────────────────────────────── */
+.why-section {
+  padding: 5rem 4rem;
+  background: var(--charcoal-2);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.why-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 3rem; }
+.why-card {
+  background: var(--charcoal-3);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 18px;
+  padding: 2rem;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.why-card:hover { border-color: rgba(232,68,28,0.3); transform: translateY(-4px); }
+.why-icon {
+  width: 52px; height: 52px;
+  background: rgba(232,68,28,0.12);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  margin-bottom: 1.25rem;
+  border: 1px solid rgba(232,68,28,0.2);
+}
+.why-title { font-size: 16px; font-weight: 500; color: var(--white); margin-bottom: 8px; }
+.why-desc { font-size: 13px; color: var(--smoke); line-height: 1.65; }
+
+/* ─── CART PANEL ─────────────────────────────────────────── */
+.cart-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.65);
+  z-index: 1100;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s;
+  backdrop-filter: blur(4px);
+}
+.cart-overlay.open { opacity: 1; pointer-events: all; }
+.cart-panel {
+  position: fixed;
+  right: 0; top: 0; bottom: 0;
+  width: 400px;
+  background: var(--charcoal-2);
+  border-left: 1px solid rgba(255,255,255,0.08);
+  z-index: 1200;
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.cart-panel.open { transform: translateX(0); }
+.cart-panel-head {
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.cart-panel-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  letter-spacing: 2px;
+  color: var(--white);
+}
+.cart-close {
+  width: 34px; height: 34px;
+  background: var(--charcoal-3);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--smoke);
+  font-size: 16px;
+  transition: color 0.2s, background 0.2s;
+}
+.cart-close:hover { color: var(--white); background: var(--ash); }
+.cart-body { flex: 1; overflow-y: auto; padding: 1rem 1.5rem; }
+.cart-empty {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; height: 100%;
+  color: var(--smoke);
+  text-align: center;
+  gap: 1rem;
+}
+.cart-empty-icon { font-size: 56px; opacity: 0.5; }
+.cart-empty-msg { font-size: 16px; }
+.cart-empty-sub { font-size: 13px; color: var(--ash); }
+.cart-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  animation: fadeUp 0.25s both;
+}
+.ci-emoji {
+  width: 52px; height: 52px;
+  background: var(--charcoal-3);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  flex-shrink: 0;
+}
+.ci-info { flex: 1; }
+.ci-name { font-size: 14px; font-weight: 500; color: var(--white); margin-bottom: 4px; }
+.ci-price { font-size: 13px; color: var(--flame); }
+.ci-qty {
+  display: flex; align-items: center; gap: 10px;
+}
+.qty-btn {
+  width: 28px; height: 28px;
+  background: var(--charcoal-3);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 7px;
+  color: var(--cream);
+  font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+.qty-btn:hover { background: var(--ash); }
+.qty-val { font-size: 14px; font-weight: 500; color: var(--white); min-width: 16px; text-align: center; }
+.cart-foot {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+.cart-row {
+  display: flex; justify-content: space-between;
+  font-size: 13px; color: var(--smoke);
+  margin-bottom: 10px;
+}
+.cart-row.total {
+  font-size: 16px; font-weight: 500; color: var(--white);
+  padding-top: 12px;
+  margin-top: 4px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.cart-row.total span:last-child { color: var(--flame); font-family: var(--font-display); font-size: 22px; letter-spacing: 1px; }
+.checkout-btn {
+  width: 100%;
+  background: var(--flame);
+  color: var(--white);
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 500;
+  margin-top: 1rem;
+  letter-spacing: 0.3px;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 8px 24px rgba(232,68,28,0.3);
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.checkout-btn:hover { background: var(--flame-light); transform: translateY(-1px); box-shadow: 0 12px 32px rgba(232,68,28,0.4); }
+.checkout-btn:active { transform: translateY(0); }
+
+/* ─── TOAST ──────────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 28px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--charcoal-3);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--cream);
+  padding: 12px 24px;
+  border-radius: 100px;
+  font-size: 14px;
+  z-index: 2000;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex; align-items: center; gap: 10px;
+  white-space: nowrap;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast-dot { width: 8px; height: 8px; background: var(--flame); border-radius: 50%; }
+
+/* ─── FOOTER ─────────────────────────────────────────────── */
+footer {
+  background: var(--charcoal);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 3rem 4rem;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 3rem;
+}
+.footer-brand-name {
+  font-family: var(--font-display);
+  font-size: 28px;
+  letter-spacing: 3px;
+  color: var(--white);
+  margin-bottom: 12px;
+}
+.footer-brand-name span { color: var(--flame); }
+.footer-desc { font-size: 13px; color: var(--smoke); line-height: 1.7; max-width: 240px; margin-bottom: 1.5rem; }
+.footer-socials { display: flex; gap: 10px; }
+.social-btn {
+  width: 36px; height: 36px;
+  background: var(--charcoal-3);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  color: var(--smoke);
+  transition: border-color 0.2s, color 0.2s;
+  cursor: pointer;
+}
+.social-btn:hover { border-color: var(--flame); color: var(--flame); }
+.footer-col-title { font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--cream-2); margin-bottom: 1rem; }
+.footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-links li a { font-size: 13px; color: var(--smoke); transition: color 0.2s; }
+.footer-links li a:hover { color: var(--cream); }
+.footer-bottom {
+  padding: 1.5rem 4rem;
+  background: var(--charcoal);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.footer-bottom-left { font-size: 12px; color: var(--ash); }
+.footer-bottom-right { font-size: 12px; color: var(--ash); display: flex; gap: 1.5rem; }
+.footer-bottom-right a { transition: color 0.2s; }
+.footer-bottom-right a:hover { color: var(--smoke); }
+
+/* ─── ANIMATIONS ─────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────── */
+@media (max-width: 900px) {
+  nav { padding: 0 1.5rem; }
+  .nav-links { display: none; }
+  .hero { grid-template-columns: 1fr; padding: 7rem 1.5rem 3rem; }
+  .hero-visual { display: none; }
+  .section { padding: 3rem 1.5rem; }
+  .strip { padding: 12px 1.5rem; flex-wrap: wrap; gap: 12px; }
+  .strip-divider { display: none; }
+  .promo-section { padding: 0 1.5rem 3rem; }
+  .promo-card { grid-template-columns: 1fr; }
+  .why-section { padding: 3rem 1.5rem; }
+  .why-grid { grid-template-columns: 1fr 1fr; }
+  footer { grid-template-columns: 1fr; padding: 2rem 1.5rem; }
+  .footer-bottom { flex-direction: column; gap: 8px; padding: 1rem 1.5rem; text-align: center; }
+  .cart-panel { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ────────────────────────────────────────────── -->
+<nav id="navbar">
+  <div class="nav-logo">
+    <div class="nav-logo-mark">🔥</div>
+    <div class="nav-logo-text">FLAME<span>HOUSE</span></div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#deals">Deals</a></li>
+    <li><a href="#why">Why Us</a></li>
+    <li><a href="#">Track Order</a></li>
+    <li><a href="#">Catering</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-location">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Bhubaneswar, OD
+    </div>
+    <button class="cart-trigger" onclick="toggleCart()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      Cart
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ─── HERO ────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-eyebrow">Now delivering in 25 min</div>
+    <h1 class="hero-headline">
+      FLAME<br>
+      <span class="accent">GRILLED</span><br>
+      <span class="serif">Perfection</span>
+    </h1>
+    <p class="hero-body">Bold flavors forged over real fire. Every bite tells a story of craft, heat, and obsession. Order online and get it delivered fresh to your door.</p>
+    <div class="hero-actions">
+      <a href="#menu" class="btn-flame">
+        Order Now
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a href="#why" class="btn-outline">Our Story</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-num">25<span>min</span></div>
+        <div class="hero-stat-lbl">Avg. Delivery</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">4.9<span>★</span></div>
+        <div class="hero-stat-lbl">App Rating</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">2M<span>+</span></div>
+        <div class="hero-stat-lbl">Customers Served</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="feature-card">
+      <div class="feature-emoji-ring">🍔</div>
+      <div class="feature-card-name">Signature Flame Burger</div>
+      <div class="feature-card-price">₹299</div>
+      <button class="feature-card-btn" onclick="addToCart({id:1,name:'Signature Flame Burger',emoji:'🍔',price:299,cat:'burgers'})">Add to Order</button>
+      <div class="floating-pip" style="top:20px;right:-16px;">
+        <div class="pip-lbl">Today's pick</div>
+        <div class="pip-val">20% OFF</div>
+      </div>
+      <div class="floating-pip" style="bottom:24px;left:-24px;">
+        <div class="pip-stars">★★★★★</div>
+        <div class="pip-val">4.9 · 12k reviews</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── STRIP ────────────────────────────────────────────── -->
+<div class="strip">
+  <div class="strip-item"><span class="strip-icon">🚀</span> Free delivery above ₹499</div>
+  <div class="strip-divider"></div>
+  <div class="strip-item"><span class="strip-icon">⏱️</span> 30-minute delivery guarantee</div>
+  <div class="strip-divider"></div>
+  <div class="strip-item"><span class="strip-icon">🔥</span> Fresh off the grill, always</div>
+  <div class="strip-divider"></div>
+  <div class="strip-item"><span class="strip-icon">♻️</span> Eco-friendly packaging</div>
+</div>
+
+<!-- ─── MENU ─────────────────────────────────────────────── -->
+<section class="section" id="menu">
+  <div class="section-header">
+    <div>
+      <div class="section-eyebrow">Our Menu</div>
+      <div class="section-title">WHAT ARE YOU CRAVING?</div>
+    </div>
+    <a class="see-all">View full menu →</a>
+  </div>
+
+  <div class="cat-tabs" id="catTabs">
+    <button class="cat-tab active" data-cat="all"><span class="tab-emoji">🍽️</span> All</button>
+    <button class="cat-tab" data-cat="burgers"><span class="tab-emoji">🍔</span> Burgers</button>
+    <button class="cat-tab" data-cat="chicken"><span class="tab-emoji">🍗</span> Chicken</button>
+    <button class="cat-tab" data-cat="pizza"><span class="tab-emoji">🍕</span> Pizza</button>
+    <button class="cat-tab" data-cat="sides"><span class="tab-emoji">🍟</span> Sides</button>
+    <button class="cat-tab" data-cat="wraps"><span class="tab-emoji">🌯</span> Wraps</button>
+    <button class="cat-tab" data-cat="desserts"><span class="tab-emoji">🍦</span> Desserts</button>
+    <button class="cat-tab" data-cat="drinks"><span class="tab-emoji">🥤</span> Drinks</button>
+  </div>
+
+  <div class="menu-grid" id="menuGrid"></div>
+</section>
+
+<!-- ─── PROMO ─────────────────────────────────────────────── -->
+<div class="promo-section" id="deals">
+  <div class="promo-card">
+    <div class="promo-glow"></div>
+    <div>
+      <div class="promo-tag">Limited Time Offer</div>
+      <div class="promo-title">FAMILY FEAST BUNDLE</div>
+      <p class="promo-desc">4 Flame Burgers + 2 Large Loaded Fries + 4 Soft Drinks. Feed the whole crew and save big. Perfect for movie nights, match days, and everything in between.</p>
+      <div class="promo-code-wrap">
+        <div class="promo-code" onclick="copyCode(this)" title="Click to copy">FEAST40</div>
+        <span style="font-size:13px;color:var(--smoke);">Click to copy code</span>
+      </div>
+    </div>
+    <div class="promo-right">
+      <div class="promo-was">₹1,399</div>
+      <div class="promo-now">₹839</div>
+      <div class="promo-emoji-wrap">🎉</div>
+      <button class="btn-flame" style="margin-top:1rem;font-size:13px;padding:12px 22px;">Grab the Deal</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── WHY US ───────────────────────────────────────────── -->
+<div class="why-section" id="why">
+  <div style="max-width:600px;">
+    <div class="section-eyebrow">Why FlameHouse</div>
+    <div class="section-title">CRAFTED WITH OBSESSION</div>
+  </div>
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="why-icon">🔥</div>
+      <div class="why-title">Real Flame Grill</div>
+      <div class="why-desc">Every patty is cooked over an open flame at 400°C for that irreplaceable char and smoky depth of flavour.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🌿</div>
+      <div class="why-title">Fresh Ingredients</div>
+      <div class="why-desc">Locally sourced produce delivered daily. Zero frozen patties, ever. From farm to flame in under 48 hours.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">⚡</div>
+      <div class="why-title">Lightning Delivery</div>
+      <div class="why-desc">Our 25-minute promise isn't a slogan — it's a guarantee. Late? Your next order is on us.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">💳</div>
+      <div class="why-title">Easy Payments</div>
+      <div class="why-desc">UPI, cards, wallets, COD — pay how you like. 100% secure checkout with instant confirmation.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── FOOTER ───────────────────────────────────────────── -->
+<footer>
+  <div>
+    <div class="footer-brand-name">FLAME<span>HOUSE</span></div>
+    <p class="footer-desc">Seriously good food, delivered fast. Born in Bhubaneswar, feeding India one flame at a time.</p>
+    <div class="footer-socials">
+      <div class="social-btn">𝕏</div>
+      <div class="social-btn">in</div>
+      <div class="social-btn">ig</div>
+      <div class="social-btn">yt</div>
+    </div>
+  </div>
+  <div>
+    <div class="footer-col-title">Menu</div>
+    <ul class="footer-links">
+      <li><a href="#">Burgers</a></li>
+      <li><a href="#">Chicken</a></li>
+      <li><a href="#">Sides & Fries</a></li>
+      <li><a href="#">Desserts</a></li>
+      <li><a href="#">Drinks</a></li>
+    </ul>
+  </div>
+  <div>
+    <div class="footer-col-title">Company</div>
+    <ul class="footer-links">
+      <li><a href="#">About Us</a></li>
+      <li><a href="#">Careers</a></li>
+      <li><a href="#">Franchising</a></li>
+      <li><a href="#">Catering</a></li>
+      <li><a href="#">Press</a></li>
+    </ul>
+  </div>
+  <div>
+    <div class="footer-col-title">Support</div>
+    <ul class="footer-links">
+      <li><a href="#">Track Order</a></li>
+      <li><a href="#">Help Centre</a></li>
+      <li><a href="#">Refunds</a></li>
+      <li><a href="#">Allergen Info</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <div class="footer-bottom-left">© 2026 FlameHouse Pvt. Ltd. · FSSAI Lic. 12318023000123 · Bhubaneswar, Odisha</div>
+  <div class="footer-bottom-right">
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Service</a>
+    <a href="#">Cookie Settings</a>
+  </div>
+</div>
+
+<!-- ─── CART OVERLAY & PANEL ───────────────────────────── -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-panel-head">
+    <div class="cart-panel-title">YOUR ORDER</div>
+    <button class="cart-close" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-body" id="cartBody"></div>
+  <div class="cart-foot" id="cartFoot" style="display:none;">
+    <div class="cart-row"><span>Subtotal</span><span id="cartSub">₹0</span></div>
+    <div class="cart-row"><span>Delivery fee</span><span id="cartDel">₹49</span></div>
+    <div class="cart-row"><span>Taxes (5%)</span><span id="cartTax">₹0</span></div>
+    <div class="cart-row total"><span>Total</span><span id="cartTotal">₹0</span></div>
+    <button class="checkout-btn" onclick="checkout()">
+      Place Order
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ─── TOAST ────────────────────────────────────────────── -->
+<div class="toast" id="toast">
+  <div class="toast-dot"></div>
+  <span id="toastMsg">Item added!</span>
+</div>
+
+<script>
+/* ─── MENU DATA ─────────────────────────────────────────── */
+const MENU = [
+  { id:1,  cat:'burgers',  name:'Signature Flame Burger',    emoji:'🍔', price:299, desc:'Juicy double patty, smoky flame sauce, pickles, crisp lettuce & brioche bun', badge:'Bestseller', rating:'4.9' },
+  { id:2,  cat:'burgers',  name:'Spicy Jalapeño Stack',       emoji:'🌶️', price:329, desc:'Triple patty, jalapeños, pepper jack cheese & sriracha aioli', badge:'Spicy 🔥', rating:'4.7' },
+  { id:3,  cat:'burgers',  name:'Truffle Mushroom Melt',     emoji:'🍄', price:349, desc:'Grilled portobello, caramelized onions, truffle mayo & Swiss', badge:'Premium', rating:'4.8', badgeClass:'badge-gold' },
+  { id:4,  cat:'burgers',  name:'Classic Smash Burger',       emoji:'🫓', price:249, desc:'Thin crispy smash patty, American cheese, pickles, yellow mustard', badge:null, rating:'4.6' },
+  { id:5,  cat:'chicken',  name:'Crispy Fried Chicken',       emoji:'🍗', price:249, desc:'Southern-style extra-crispy with honey mustard & pickled slaw', badge:'Fan Fav', rating:'4.8' },
+  { id:6,  cat:'chicken',  name:'Grilled Chicken Sandwich',   emoji:'🥪', price:279, desc:'Flame-grilled breast, romaine, tomato, garlic aioli & focaccia', badge:null, rating:'4.6' },
+  { id:7,  cat:'chicken',  name:'Nashville Hot Tenders',      emoji:'🔥', price:299, desc:'Fiery hot chicken tenders with ranch dip & house pickles', badge:'Spicy 🌶️', rating:'4.7' },
+  { id:8,  cat:'pizza',   name:'BBQ Flame Pizza',            emoji:'🍕', price:399, desc:'Wood-fired base, BBQ chicken, caramelized onion, mozzarella', badge:'New', rating:'4.8' },
+  { id:9,  cat:'pizza',   name:'Double Pepperoni Inferno',   emoji:'🍕', price:429, desc:'Extra double pepperoni, ghost pepper sauce, mozzarella & basil', badge:'Spicy 🔥', rating:'4.7' },
+  { id:10, cat:'sides',   name:'Loaded Cheese Fries',        emoji:'🍟', price:149, desc:'Crispy fries smothered in nacho cheese sauce & jalapeños', badge:'Popular', rating:'4.7' },
+  { id:11, cat:'sides',   name:'Onion Rings Tower',          emoji:'🧅', price:129, desc:'Beer-battered golden onion rings with smoky dip', badge:null, rating:'4.5' },
+  { id:12, cat:'wraps',   name:'Smoky Chicken Wrap',         emoji:'🌯', price:219, desc:'Grilled chicken, chipotle sauce, saffron rice & fresh veggies', badge:null, rating:'4.5' },
+  { id:13, cat:'wraps',   name:'Paneer Tikka Wrap',          emoji:'🌯', price:199, desc:'Char-grilled paneer, mint chutney, red onion & raita', badge:'Veg', rating:'4.6' },
+  { id:14, cat:'desserts', name:'Lava Choco Brownie',        emoji:'🍫', price:129, desc:'Warm brownie with molten chocolate centre & vanilla scoop', badge:'Sweet', rating:'4.9' },
+  { id:15, cat:'desserts', name:'Salted Caramel Shake',      emoji:'🧁', price:149, desc:'Thick & creamy, house-made salted caramel, topped with whipped cream', badge:null, rating:'4.8' },
+  { id:16, cat:'drinks',  name:'Mango Jaljeera Cooler',      emoji:'🥭', price:89,  desc:'Fresh mango blended with mint, jaljeera & a hint of chilli', badge:'Summer', rating:'4.7' },
+  { id:17, cat:'drinks',  name:'Classic Cola Float',         emoji:'🥤', price:99,  desc:'Ice-cold cola topped with a scoop of vanilla bean ice cream', badge:null, rating:'4.5' },
+];
+
+/* ─── STATE ─────────────────────────────────────────────── */
+let cart = [];
+let activeCat = 'all';
+
+/* ─── RENDER MENU ───────────────────────────────────────── */
+function renderMenu(cat) {
+  const grid = document.getElementById('menuGrid');
+  const items = cat === 'all' ? MENU : MENU.filter(i => i.cat === cat);
+  grid.innerHTML = items.map(item => `
+    <div class="menu-card">
+      <div class="card-img">
+        ${item.badge ? `<div class="card-badge ${item.badgeClass||''}">${item.badge}</div>` : ''}
+        <span>${item.emoji}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">${item.name}</div>
+        <div class="card-desc">${item.desc}</div>
+        <div class="card-footer">
+          <div>
+            <div class="card-price">₹${item.price}</div>
+            <div class="card-price-sub">incl. taxes</div>
+          </div>
+          <div class="card-meta">
+            <div class="card-rating"><span class="star">★</span> ${item.rating}</div>
+            <button class="add-btn" onclick='addToCart(${JSON.stringify(item)})' title="Add to cart">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ─── CATEGORY TABS ─────────────────────────────────────── */
+document.getElementById('catTabs').addEventListener('click', e => {
+  const btn = e.target.closest('.cat-tab');
+  if (!btn) return;
+  document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeCat = btn.dataset.cat;
+  renderMenu(activeCat);
+});
+
+/* ─── CART ──────────────────────────────────────────────── */
+function addToCart(item) {
+  const existing = cart.find(c => c.id === item.id);
+  if (existing) existing.qty++;
+  else cart.push({ ...item, qty: 1 });
+  updateCartUI();
+  showToast(`${item.emoji} ${item.name} added!`);
+
+  const badge = document.getElementById('cartCount');
+  badge.classList.remove('bump');
+  requestAnimationFrame(() => { badge.classList.add('bump'); setTimeout(() => badge.classList.remove('bump'), 300); });
+}
+
+function changeQty(id, delta) {
+  const idx = cart.findIndex(c => c.id === id);
+  if (idx < 0) return;
+  cart[idx].qty += delta;
+  if (cart[idx].qty <= 0) cart.splice(idx, 1);
+  updateCartUI();
+}
+
+function updateCartUI() {
+  const total = cart.reduce((s, c) => s + c.qty, 0);
+  document.getElementById('cartCount').textContent = total;
+
+  const body = document.getElementById('cartBody');
+  const foot = document.getElementById('cartFoot');
+
+  if (cart.length === 0) {
+    body.innerHTML = `
+      <div class="cart-empty">
+        <div class="cart-empty-icon">🛒</div>
+        <div class="cart-empty-msg">Your cart is empty</div>
+        <div class="cart-empty-sub">Add something delicious from the menu</div>
+      </div>`;
+    foot.style.display = 'none';
+    return;
+  }
+
+  body.innerHTML = cart.map(item => `
+    <div class="cart-item">
+      <div class="ci-emoji">${item.emoji}</div>
+      <div class="ci-info">
+        <div class="ci-name">${item.name}</div>
+        <div class="ci-price">₹${item.price} × ${item.qty} = ₹${item.price * item.qty}</div>
+      </div>
+      <div class="ci-qty">
+        <button class="qty-btn" onclick="changeQty(${item.id}, -1)">−</button>
+        <div class="qty-val">${item.qty}</div>
+        <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+      </div>
+    </div>
+  `).join('');
+
+  const sub = cart.reduce((s, c) => s + c.price * c.qty, 0);
+  const del = sub >= 499 ? 0 : 49;
+  const tax = Math.round(sub * 0.05);
+  const grand = sub + del + tax;
+
+  document.getElementById('cartSub').textContent = `₹${sub}`;
+  document.getElementById('cartDel').textContent = del === 0 ? 'FREE 🎉' : `₹${del}`;
+  document.getElementById('cartTax').textContent = `₹${tax}`;
+  document.getElementById('cartTotal').textContent = `₹${grand}`;
+  foot.style.display = 'block';
+}
+
+function toggleCart() {
+  document.getElementById('cartOverlay').classList.toggle('open');
+  document.getElementById('cartPanel').classList.toggle('open');
+}
+
+function checkout() {
+  showToast('🎉 Order placed! Arriving in 25 min.');
+  cart = [];
+  updateCartUI();
+  toggleCart();
+}
+
+/* ─── TOAST ─────────────────────────────────────────────── */
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ─── PROMO CODE COPY ───────────────────────────────────── */
+function copyCode(el) {
+  navigator.clipboard.writeText(el.textContent.trim()).catch(() => {});
+  showToast('✅ Code "FEAST40" copied!');
+}
+
+/* ─── INIT ──────────────────────────────────────────────── */
+renderMenu('all');
+updateCartUI();
+</script>
+</body>
+</html>
